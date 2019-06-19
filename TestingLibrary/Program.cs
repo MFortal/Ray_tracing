@@ -1,4 +1,6 @@
-﻿namespace TestingApp
+﻿using RayTracingLib;
+
+namespace TestingApp
 {
     class Program
     {
