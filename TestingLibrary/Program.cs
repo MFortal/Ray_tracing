@@ -13,13 +13,13 @@ namespace TestingApp
             int width = 1024;
             int height = 768;
 
-            //var gR = Color.BlueViolet.R;
-            //var gG = Color.BlueViolet.G;
-            //var gB = Color.BlueViolet.B;
+            var material = new Material(1, null, Color.Red, 1);
+            ;
+            var sphere = new Sphere(new Geometry.Geometry.Vec3f(0f, 0, -5), 1.5F, Color.Red, material);
+            var light = new Light(new Geometry.Geometry.Vec3f(-20, 20, 20), 1);
 
-            var sphere = new Sphere(new Geometry.Geometry.Vec3f(0f, 1, -10), 1, Color.DarkKhaki);
+            RayTraceHelper.Render(width, height, sphere, Color.White, light).Save("C:/1/1.jpg");
 
-            RayTraceHelper.Render(width, height, sphere, Color.DarkOliveGreen).Save("C:/1/1.jpg");
 
         }
     }

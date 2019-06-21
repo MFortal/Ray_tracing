@@ -80,12 +80,13 @@ namespace Geometry
         public Geometry.Vec3f Center;
         public float Radius;
         public Color Color;
+        public Material Material;
 
-        public Sphere(Geometry.Vec3f center, float radius, Color color)
+        public Sphere(Geometry.Vec3f center, float radius, Color color, Material material)
         {
             Center = center;
             Radius = radius;
-            Color = color;
+            Material = material;
         }
 
         public bool RayIntersect(Geometry.Vec3f orig, Geometry.Vec3f dir, ref float t0)
@@ -111,7 +112,7 @@ namespace Geometry
             return true;
         }
 
-        public bool IsSphereIntersect(Geometry.Vec3f orig, Geometry.Vec3f dir, Sphere sphere)
+        public bool IsSphereIntersect(Geometry.Vec3f orig, Geometry.Vec3f dir, Sphere sphere, Material material)
         {
             var spheresDist = float.MaxValue;
             var disti = 0f;
@@ -119,9 +120,46 @@ namespace Geometry
             if (sphere.RayIntersect(orig, dir, ref disti) && disti < spheresDist)
             {
                 spheresDist = disti;
-
+                material = sphere.Material;
             }
             return spheresDist < 1000;
         }
     }
+    public class Light
+    {
+        public Geometry.Vec3f position;
+        public float intensity;
+
+        public Light(Geometry.Vec3f position, float intensity)
+        {
+            this.position = position;
+            this.intensity = intensity;
+        }
+    }
+    public class Material
+    {
+        public float RefIndex;
+        public Geometry.Vec3f DiffColor;
+        public float SpecExp;
+        public float[] Albedo;
+
+        public Material(float refIndex, float[] albedo, Color diffColor, float specExp)
+        {
+            RefIndex = refIndex;
+            Albedo = albedo;
+            DiffColor = new Geometry.Vec3f(diffColor.R, diffColor.G, diffColor.B);
+            SpecExp = specExp;
+        }
+
+        public Material()
+        {
+            RefIndex = 1;
+            SpecExp = 0;
+            Albedo = new[] { 1f, 0f, 0f, 0f };
+
+            DiffColor = new Geometry.Vec3f();
+        }
+    }
 }
+
+ 
