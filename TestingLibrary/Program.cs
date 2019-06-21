@@ -12,10 +12,15 @@ namespace TestingApp
         {
             int width = 1024;
             int height = 768;
-            
-            var sphere = new Sphere(new Geometry.Geometry.Vec3f(0f, 1, -10), 1, Color.Coral);
 
-            RayTraceHelper.Render(width, height, sphere).Save("C:/1/1.jpg");
+            //var gR = Color.BlueViolet.R;
+            //var gG = Color.BlueViolet.G;
+            //var gB = Color.BlueViolet.B;
+
+            var sphere = new Sphere(new Geometry.Geometry.Vec3f(0f, 1, -10), 1, Color.BlueViolet);
+
+            RayTraceHelper.Render(width, height, sphere, Color.Crimson).Save("C:/1/1.jpg");
+
         }
     }
 }

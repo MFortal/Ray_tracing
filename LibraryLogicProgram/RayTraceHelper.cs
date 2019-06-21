@@ -8,7 +8,7 @@ namespace RayTracingLib
 {
     public class RayTraceHelper
     {
-        public static Bitmap Render(int width, int height, Sphere sphere)
+        public static Bitmap Render(int width, int height, Sphere sphere, Color background)
         {
             var fov = (float)(Math.PI / 3f);
 
@@ -30,13 +30,13 @@ namespace RayTracingLib
 
                     var vdir = new Geometry.Geometry.Vec3f(dirx, diry, dirz).normalize();
 
-                    framebuffer[i + j * width] = CastRay(vcam, vdir, sphere, Color.Beige);
+                    framebuffer[i + j * width] = CastRay(vcam, vdir, sphere, background);
                 }
             }
 
             return CreateImage(width, height, framebuffer);
         }
-        
+
         /// <summary>
         /// Цвет пикселя
         /// </summary>
@@ -50,7 +50,6 @@ namespace RayTracingLib
             {
                 return backgroung;
             }
-            //цвет сферы
             return sphere.Color;
         }
 
@@ -61,16 +60,28 @@ namespace RayTracingLib
             int l = 0;
             for (int i = 0; i < imageData.Length; i++)
             {
-                data[l++] = imageData[i].R;
-                data[l++] = imageData[i].G;
-                data[l++] = imageData[i].B;
                 data[l++] = 0;
+
+                data[l++] = imageData[i].R;
+                //data[l++] = imageData[i].G;
+                //data[l++] = imageData[i].B;
+
+                //data[l++] = imageData[i].R;
+                data[l++] = imageData[i].G;
+                //data[l++] = imageData[i].B;
+
+                //data[l++] = imageData[i].R;
+                //data[l++] = imageData[i].G;
+                data[l++] = imageData[i].B;
+
+                
+
             }
             unsafe
             {
                 fixed (byte* ptr = data)
                 {
-                    return new Bitmap(width, height, width * 4, PixelFormat.Format32bppRgb, new IntPtr(ptr));
+                    return new Bitmap(width, height, width * 4, PixelFormat.Format32bppArgb, new IntPtr(ptr));
                 }
             }
         }
