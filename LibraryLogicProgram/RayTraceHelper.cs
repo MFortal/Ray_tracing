@@ -60,22 +60,10 @@ namespace RayTracingLib
             int l = 0;
             for (int i = 0; i < imageData.Length; i++)
             {
-                data[l++] = 0;
-
-                data[l++] = imageData[i].R;
-                //data[l++] = imageData[i].G;
-                //data[l++] = imageData[i].B;
-
-                //data[l++] = imageData[i].R;
-                data[l++] = imageData[i].G;
-                //data[l++] = imageData[i].B;
-
-                //data[l++] = imageData[i].R;
-                //data[l++] = imageData[i].G;
                 data[l++] = imageData[i].B;
-
-                
-
+                data[l++] = imageData[i].G;
+                data[l++] = imageData[i].R;
+                data[l++] = 255;
             }
             unsafe
             {

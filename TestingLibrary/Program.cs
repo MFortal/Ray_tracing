@@ -17,9 +17,9 @@ namespace TestingApp
             //var gG = Color.BlueViolet.G;
             //var gB = Color.BlueViolet.B;
 
-            var sphere = new Sphere(new Geometry.Geometry.Vec3f(0f, 1, -10), 1, Color.BlueViolet);
+            var sphere = new Sphere(new Geometry.Geometry.Vec3f(0f, 1, -10), 1, Color.DarkKhaki);
 
-            RayTraceHelper.Render(width, height, sphere, Color.Crimson).Save("C:/1/1.jpg");
+            RayTraceHelper.Render(width, height, sphere, Color.DarkOliveGreen).Save("C:/1/1.jpg");
 
         }
     }
