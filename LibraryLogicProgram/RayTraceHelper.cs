@@ -12,7 +12,7 @@ namespace RayTracingLib
         {
             var fov = (float)(Math.PI / 3f);
 
-            var framebuffer = new byte[width * height];
+            var framebuffer = new Color[width * height];
 
             // actual rendering loop
             for (var j = 0; j < height; j++)
@@ -30,14 +30,13 @@ namespace RayTracingLib
 
                     var vdir = new Geometry.Geometry.Vec3f(dirx, diry, dirz).normalize();
 
-                    framebuffer[i + j * width] = CastRay(vcam, vdir, sphere);
+                    framebuffer[i + j * width] = CastRay(vcam, vdir, sphere, Color.Beige);
                 }
             }
 
             return CreateImage(width, height, framebuffer);
         }
-
-
+        
         /// <summary>
         /// Цвет пикселя
         /// </summary>
@@ -45,27 +44,26 @@ namespace RayTracingLib
         /// <param name="dir"></param>
         /// <param name="sphere"></param>
         /// <returns></returns>
-        private static byte CastRay(Geometry.Geometry.Vec3f orig, Geometry.Geometry.Vec3f dir, Sphere sphere)
+        private static Color CastRay(Geometry.Geometry.Vec3f orig, Geometry.Geometry.Vec3f dir, Sphere sphere, Color backgroung)
         {
             if (!sphere.IsSphereIntersect(orig, dir, sphere))
             {
-                return 255;
+                return backgroung;
             }
             //цвет сферы
-            return 0;
+            return sphere.Color;
         }
 
-        public static Bitmap CreateImage(int width, int height, byte[] imageData)
+        public static Bitmap CreateImage(int width, int height, Color[] imageData)
         {
 
             byte[] data = new byte[width * height * 4];
             int l = 0;
             for (int i = 0; i < imageData.Length; i++)
             {
-                byte value = imageData[i];
-                data[l++] = value;
-                data[l++] = value;
-                data[l++] = value;
+                data[l++] = imageData[i].R;
+                data[l++] = imageData[i].G;
+                data[l++] = imageData[i].B;
                 data[l++] = 0;
             }
             unsafe

@@ -79,12 +79,13 @@ namespace Geometry
     {
         public Geometry.Vec3f Center;
         public float Radius;
-        public byte Color;
+        public Color Color;
 
-        public Sphere(Geometry.Vec3f center, float radius)
+        public Sphere(Geometry.Vec3f center, float radius, Color color)
         {
             Center = center;
             Radius = radius;
+            Color = color;
         }
 
         public bool RayIntersect(Geometry.Vec3f orig, Geometry.Vec3f dir, ref float t0)
