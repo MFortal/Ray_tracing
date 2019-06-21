@@ -1,4 +1,7 @@
-﻿using RayTracingLib;
+﻿using System;
+using System.Drawing;
+using Geometry;
+using RayTracingLib;
 
 
 namespace TestingApp
@@ -7,19 +10,12 @@ namespace TestingApp
     {
         static void Main(string[] args)
         {
-            //ширина
             int width = 1024;
-            //высота
             int height = 768;
+            
+            var sphere = new Sphere(new Geometry.Geometry.Vec3f(0f, 1, -10), 1);
 
-            //получение массива различных пикселей
-            var pixel = ImageService.GetImageArray(width, height);
-
-            //получение холста
-            var image = ImageService.CreateImage(width, height, pixel);
-
-            //сохранение изображения на диск                     
-            image.Save("C:/1/2.bmp");
+            RayTraceHelper.Render(width, height, sphere).Save("C:/1/1.jpg");
         }
     }
 }

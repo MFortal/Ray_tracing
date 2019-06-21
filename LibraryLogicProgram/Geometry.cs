@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
+using Geometry;
 
 namespace Geometry
 {
     public class Geometry
     {
+
         public class Vec3f
         {
             public float x;
@@ -74,6 +73,54 @@ namespace Geometry
             {
                 return self * -1f;
             }
+        }
+    }
+    public class Sphere
+    {
+        public Geometry.Vec3f Center;
+        public float Radius;
+        public byte Color;
+
+        public Sphere(Geometry.Vec3f center, float radius)
+        {
+            Center = center;
+            Radius = radius;
+        }
+
+        public bool RayIntersect(Geometry.Vec3f orig, Geometry.Vec3f dir, ref float t0)
+        {
+            var L = Center - orig;
+
+            var tca = L * dir;
+
+            var d2 = L * L - tca * tca;
+
+            if (d2 > Radius * Radius) return false;
+
+            var thc = (float)Math.Sqrt(Radius * Radius - d2);
+
+            t0 = tca - thc;
+
+            var t1 = tca + thc;
+
+            if (t0 < 0) t0 = t1;
+
+            if (t0 < 0) return false;
+
+            return true;
+        }
+
+        public bool IsSphereIntersect(Geometry.Vec3f orig, Geometry.Vec3f dir, Sphere sphere)
+        {
+            var spheresDist = float.MaxValue;
+            var disti = 0f;
+
+            if (sphere.RayIntersect(orig, dir, ref disti) && disti < spheresDist)
+            {
+                spheresDist = disti;
+
+            }
+            return spheresDist < 1000;
         }
     }
 }
