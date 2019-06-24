@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Drawing;
-using Geometry;
+using static Geometry.Geometry;
 
 namespace Geometry
 {
@@ -77,19 +77,19 @@ namespace Geometry
     }
     public class Sphere
     {
-        public Geometry.Vec3f Center;
+        public Vec3f Center;
         public float Radius;
         public Color Color;
         public Material Material;
 
-        public Sphere(Geometry.Vec3f center, float radius, Color color, Material material)
+        public Sphere(Vec3f center, float radius, Color color, Material material)
         {
             Center = center;
             Radius = radius;
             Material = material;
         }
 
-        public bool RayIntersect(Geometry.Vec3f orig, Geometry.Vec3f dir, ref float t0)
+        public bool RayIntersect(Vec3f orig, Vec3f dir, ref float t0)
         {
             var L = Center - orig;
 
@@ -112,7 +112,7 @@ namespace Geometry
             return true;
         }
 
-        public bool IsSphereIntersect(Geometry.Vec3f orig, Geometry.Vec3f dir, Sphere sphere, Material material)
+        public bool IsSphereIntersect(Vec3f orig, Vec3f dir, Sphere sphere, ref Vec3f hit, ref Vec3f N, ref Material material)
         {
             var spheresDist = float.MaxValue;
             var disti = 0f;
@@ -120,6 +120,11 @@ namespace Geometry
             if (sphere.RayIntersect(orig, dir, ref disti) && disti < spheresDist)
             {
                 spheresDist = disti;
+
+                hit = orig + dir * disti;
+
+                N = (hit - sphere.Center).normalize();
+
                 material = sphere.Material;
             }
             return spheresDist < 1000;
@@ -127,10 +132,10 @@ namespace Geometry
     }
     public class Light
     {
-        public Geometry.Vec3f position;
+        public Vec3f position;
         public float intensity;
 
-        public Light(Geometry.Vec3f position, float intensity)
+        public Light(Vec3f position, float intensity)
         {
             this.position = position;
             this.intensity = intensity;
@@ -139,7 +144,7 @@ namespace Geometry
     public class Material
     {
         public float RefIndex;
-        public Geometry.Vec3f DiffColor;
+        public Vec3f DiffColor;
         public float SpecExp;
         public float[] Albedo;
 
@@ -147,7 +152,7 @@ namespace Geometry
         {
             RefIndex = refIndex;
             Albedo = albedo;
-            DiffColor = new Geometry.Vec3f(diffColor.R, diffColor.G, diffColor.B);
+            DiffColor = new Vec3f(diffColor.R, diffColor.G, diffColor.B);
             SpecExp = specExp;
         }
 
@@ -157,7 +162,7 @@ namespace Geometry
             SpecExp = 0;
             Albedo = new[] { 1f, 0f, 0f, 0f };
 
-            DiffColor = new Geometry.Vec3f();
+            DiffColor = new Vec3f();
         }
     }
 }

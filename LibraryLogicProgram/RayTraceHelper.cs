@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using Geometry;
+using static Geometry.Geometry;
 
 
 namespace RayTracingLib
@@ -30,7 +31,7 @@ namespace RayTracingLib
 
                     var vdir = new Geometry.Geometry.Vec3f(dirx, diry, dirz).normalize();
 
-                    framebuffer[i + j * width] = CastRay(vcam, vdir, sphere, background, sphere.Material, light);
+                    framebuffer[i + j * width] = CastRay(vcam, vdir, sphere, background, light);
                 }
             }
 
@@ -44,22 +45,28 @@ namespace RayTracingLib
         /// <param name="dir"></param>
         /// <param name="sphere"></param>
         /// <returns></returns>
-        private static Color CastRay(Geometry.Geometry.Vec3f orig, Geometry.Geometry.Vec3f dir, Sphere sphere, Color background, Material material, Light light)
+        private static Color CastRay(Geometry.Geometry.Vec3f orig, Geometry.Geometry.Vec3f dir, Sphere sphere, Color background, Light light)
         {
             var N = new Geometry.Geometry.Vec3f();
+            var point = new Vec3f();
 
-            if (!sphere.IsSphereIntersect(orig, dir, sphere, material))
+
+            if (!sphere.IsSphereIntersect(orig, dir, sphere, ref point, ref N, ref sphere.Material))
             {
                 return background;
             }
 
-            var diffuseLightIntensity = 2f;
-            var lightDir = (light.position - N).normalize();
+            var diffuseLightIntensity = 0f;
+
+            var lightDir = (light.position - point).normalize();
+
+            var lightDistance = (light.position - point).norm();
+
             diffuseLightIntensity += light.intensity * Math.Max(0, lightDir * N);
 
-            var lightresult = material.DiffColor;
+            var result = sphere.Material.DiffColor * diffuseLightIntensity * sphere.Material.Albedo[0];
 
-            sphere.Color = Color.FromArgb(255,(int)(lightresult.x), (int)(lightresult.y), (int)(lightresult.z));
+            sphere.Color = Color.FromArgb(255, (int)(result.x), (int)(result.y), (int)(result.z));
 
             return sphere.Color;
         }
