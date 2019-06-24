@@ -10,7 +10,7 @@ namespace RayTracingLib
 {
     public class RayTraceHelper
     {
-        public static Bitmap Render(int width, int height, List<Sphere> spheres, Bitmap background, Light light)
+        public static Bitmap Render(int width, int height, List<Sphere> spheres, Bitmap background, List<Light> lights)
         {
             var fov = (float)(Math.PI / 3f);
 
@@ -32,7 +32,7 @@ namespace RayTracingLib
 
                     var backgroundPixel = background.GetPixel(i, j);
 
-                    framebuffer[i + j * width] = CastRay(vcam, vdir, spheres, backgroundPixel, light);
+                    framebuffer[i + j * width] = CastRay(vcam, vdir, spheres, backgroundPixel, lights);
                 }
             }
             return CreateImage(width, height, framebuffer);
@@ -45,7 +45,7 @@ namespace RayTracingLib
         /// <param name="dir"></param>
         /// <param name="sphere"></param>
         /// <returns></returns>
-        private static Color CastRay(Vec3f orig, Vec3f dir, List<Sphere> spheres, Color background, Light light)
+        private static Color CastRay(Vec3f orig, Vec3f dir, List<Sphere> spheres, Color background, List<Light> lights)
         {
             var n = new Vec3f();
             var point = new Vec3f();
@@ -56,16 +56,21 @@ namespace RayTracingLib
             {
                 return background;
             }
+
             var diffuseLightIntensity = 0f;
+            foreach (var light in lights)
+            {
+                var lightDir = (light.position - point).Normalize();
 
-            var lightDir = (light.position - point).Normalize();
+                var lightDistance = (light.position - point).Norm();
 
-            var lightDistance = (light.position - point).Norm();
-
-            diffuseLightIntensity += light.intensity * Math.Max(0, lightDir * n);
+                diffuseLightIntensity += light.intensity * Math.Max(0, lightDir * n);
+            }
 
             result = material.DiffColor * diffuseLightIntensity * material.Albedo[0];
-
+            if (result.x > 255) result.x = 255;
+            if (result.y > 255) result.y = 255;
+            if (result.z > 255) result.z = 255;
             return Color.FromArgb(255, (int)(result.x), (int)(result.y), (int)(result.z));
         }
 

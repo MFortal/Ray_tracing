@@ -17,7 +17,11 @@ namespace TestingApp
 
             Bitmap backgroundImage = new Bitmap(@"C:/1/back.jpg");
 
-            var light = new Light(new Vec3f(-20, 20, 20), 1);
+            List<Light> lights = new List<Light>()
+            {
+                new Light(new Vec3f(-20, 20, 20), 1),
+                new Light(new Vec3f(10, 20, 20), 1)
+            };
 
             List<Material> materials = new List<Material>()
             {
@@ -31,7 +35,7 @@ namespace TestingApp
                 new Sphere(new Vec3f(1f, 1, -10), 1.5F, materials[1])
             };
 
-            RayTraceHelper.Render(width, height, spheres, backgroundImage, light).Save("C:/1/1.jpg");
+            RayTraceHelper.Render(width, height, spheres, backgroundImage, lights).Save("C:/1/1.jpg");
         }
     }
 }
