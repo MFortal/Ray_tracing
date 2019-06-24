@@ -15,7 +15,7 @@ namespace TestingApp
             int width = 1024;
             int height = 768;
 
-            Bitmap backgroundImage = new Bitmap(@"C:/1/3.jpg");
+            Bitmap backgroundImage = new Bitmap(@"C:/1/back.jpg");
 
             var light = new Light(new Vec3f(-20, 20, 20), 1);
 

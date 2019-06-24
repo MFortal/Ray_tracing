@@ -16,12 +16,10 @@ namespace RayTracingLib
 
             var framebuffer = new Color[width * height];
 
-            // actual rendering loop
             for (var j = 0; j < height; j++)
             {
                 for (var i = 0; i < width; i++)
                 {
-                    // this flips the image at the same time
                     var dirx = i + .5f - width / 2f;
 
                     var diry = -(j + .5f) + height / 2f;
@@ -32,7 +30,7 @@ namespace RayTracingLib
 
                     var vdir = new Vec3f(dirx, diry, dirz).Normalize();
 
-                    var backgroundPixel = GetArrayPixelBackground(i, j, background);
+                    var backgroundPixel = background.GetPixel(i, j);
 
                     framebuffer[i + j * width] = CastRay(vcam, vdir, spheres, backgroundPixel, light);
                 }
@@ -60,17 +58,13 @@ namespace RayTracingLib
             }
             var diffuseLightIntensity = 0f;
 
-            var specularLightIntensity = 0f;
-
             var lightDir = (light.position - point).Normalize();
 
             var lightDistance = (light.position - point).Norm();
 
             diffuseLightIntensity += light.intensity * Math.Max(0, lightDir * n);
 
-            specularLightIntensity += (float)Math.Pow(Math.Max(0f, Reflect(lightDir, n) * dir), material.SpecExp) * light.intensity;
-
-            result = material.DiffColor * diffuseLightIntensity * material.Albedo[0] + new Vec3f(1f, 1f, 1f) * specularLightIntensity * material.Albedo[1];
+            result = material.DiffColor * diffuseLightIntensity * material.Albedo[0];
 
             return Color.FromArgb(255, (int)(result.x), (int)(result.y), (int)(result.z));
         }
@@ -94,18 +88,6 @@ namespace RayTracingLib
                     return new Bitmap(width, height, width * 4, PixelFormat.Format32bppArgb, new IntPtr(ptr));
                 }
             }
-        }
-
-        public static Vec3f Reflect(Vec3f I, Vec3f N)
-        {
-            return I - N * 2f * (N * I);
-        }
-
-        public static Color GetArrayPixelBackground(int i, int j, Bitmap backgroundImage)
-        {
-            var backgroundPixel = backgroundImage.GetPixel(i, j);
-
-            return backgroundPixel;
         }
     }
 }
