@@ -20,7 +20,8 @@ namespace TestingApp
             List<Light> lights = new List<Light>()
             {
                 new Light(new Vec3f(-20, 20, 20), 1),
-                new Light(new Vec3f(10, 20, 20), 1)
+                //new Light(new Vec3f(10, 20, 20), 1),
+                //new Light(new Vec3f(10, -20, 20), 1)
             };
 
             List<Material> materials = new List<Material>()
@@ -31,8 +32,8 @@ namespace TestingApp
 
             List<Sphere> spheres = new List<Sphere>()
             {
-                new Sphere(new Vec3f(0f, 0, -5), 1.5F, materials[0]),
-                new Sphere(new Vec3f(1f, 1, -10), 1.5F, materials[1])
+                new Sphere(new Vec3f(0f, 0f, -5), 1F, materials[0]),
+                new Sphere(new Vec3f(1f, 2f, -5), 1F, materials[1])
             };
 
             RayTraceHelper.Render(width, height, spheres, backgroundImage, lights).Save("C:/1/1.jpg");

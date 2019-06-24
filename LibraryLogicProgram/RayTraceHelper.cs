@@ -68,9 +68,11 @@ namespace RayTracingLib
             }
 
             result = material.DiffColor * diffuseLightIntensity * material.Albedo[0];
+
             if (result.x > 255) result.x = 255;
             if (result.y > 255) result.y = 255;
             if (result.z > 255) result.z = 255;
+
             return Color.FromArgb(255, (int)(result.x), (int)(result.y), (int)(result.z));
         }
 
