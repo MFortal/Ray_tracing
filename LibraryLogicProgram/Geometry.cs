@@ -79,10 +79,9 @@ namespace Geometry
     {
         public Vec3f Center;
         public float Radius;
-
         public Material Material;
 
-        public Sphere(Vec3f center, float radius, Color color, Material material)
+        public Sphere(Vec3f center, float radius, Material material)
         {
             Center = center;
             Radius = radius;

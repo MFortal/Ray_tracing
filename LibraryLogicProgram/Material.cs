@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static Geometry.Geometry;
 
 namespace RayTracingLib
 {
     public class Material
     {
         public float RefIndex;
-        public Geometry.Geometry.Vec3f DiffColor;
+        public Vec3f DiffColor;
         public float SpecExp;
         public float[] Albedo;
 
@@ -18,7 +16,7 @@ namespace RayTracingLib
         {
             RefIndex = refIndex;
             Albedo = albedo;
-            DiffColor = new Geometry.Geometry.Vec3f(diffColor.R, diffColor.G, diffColor.B);
+            DiffColor = new Vec3f(diffColor.R, diffColor.G, diffColor.B);
             SpecExp = specExp;
         }
 
@@ -27,7 +25,7 @@ namespace RayTracingLib
             RefIndex = 1;
             SpecExp = 0;
             Albedo = new[] { 1f, 0f, 0f, 0f };
-            DiffColor = new Geometry.Geometry.Vec3f();
+            DiffColor = new Vec3f();
         }
     }
 }

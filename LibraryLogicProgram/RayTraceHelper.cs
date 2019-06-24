@@ -27,13 +27,14 @@ namespace RayTracingLib
 
                     var dirz = -height / (2f * (float)Math.Tan(fov / 2f));
 
-                    var vcam = new Geometry.Geometry.Vec3f(0, 0, 0);
+                    var vcam = new Vec3f(0, 0, 0);
 
-                    var vdir = new Geometry.Geometry.Vec3f(dirx, diry, dirz).Normalize();
+                    var vdir = new Vec3f(dirx, diry, dirz).Normalize();
 
                     framebuffer[i + j * width] = CastRay(vcam, vdir, sphere, background, light);
                 }
             }
+
             return CreateImage(width, height, framebuffer);
         }
 
@@ -44,9 +45,9 @@ namespace RayTracingLib
         /// <param name="dir"></param>
         /// <param name="sphere"></param>
         /// <returns></returns>
-        private static Color CastRay(Geometry.Geometry.Vec3f orig, Geometry.Geometry.Vec3f dir, Sphere sphere, Color background, Light light)
+        private static Color CastRay(Vec3f orig, Vec3f dir, Sphere sphere, Color background, Light light)
         {
-            var N = new Geometry.Geometry.Vec3f();
+            var N = new Vec3f();
             var point = new Vec3f();
 
 
@@ -65,17 +66,14 @@ namespace RayTracingLib
 
             var result = sphere.Material.DiffColor * diffuseLightIntensity * sphere.Material.Albedo[0];
 
-            sphere.Material.DiffColor = result;
-
-            return Color.FromArgb((int)result.x, (int)result.y, (int)result.z);
+            return Color.FromArgb(255, (int)(result.x), (int)(result.y), (int)(result.z));
         }
-        
+
         public static Bitmap CreateImage(int width, int height, Color[] imageData)
         {
 
             byte[] data = new byte[width * height * 4];
             int l = 0;
-
             for (int i = 0; i < imageData.Length; i++)
             {
                 data[l++] = imageData[i].B;
