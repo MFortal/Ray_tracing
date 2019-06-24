@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using Geometry;
 using RayTracingLib;
@@ -14,13 +15,23 @@ namespace TestingApp
             int width = 1024;
             int height = 768;
 
-            var material = new Material(1, new[] { .9f, .1f, .0f, .0f }, Color.BlueViolet, 10);
-            var sphere = new Sphere(new Vec3f(0f, 0, -5), 1.5F, material);
+            Bitmap backgroundImage = new Bitmap(@"C:/1/3.jpg");
+
             var light = new Light(new Vec3f(-20, 20, 20), 1);
 
-            RayTraceHelper.Render(width, height, sphere, Color.White, light).Save("C:/1/1.jpg");
+            List<Material> materials = new List<Material>()
+            {
+               new Material(1, new[] { .9f, .1f, .0f, .0f }, Color.Azure, 10),
+               new Material(1, new[] { .9f, .1f, .0f, .0f }, Color.Blue, 10)
+            };
 
+            List<Sphere> spheres = new List<Sphere>()
+            {
+                new Sphere(new Vec3f(0f, 0, -5), 1.5F, materials[0]),
+                new Sphere(new Vec3f(1f, 1, -10), 1.5F, materials[1])
+            };
 
+            RayTraceHelper.Render(width, height, spheres, backgroundImage, light).Save("C:/1/1.jpg");
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using Geometry;
@@ -9,7 +10,7 @@ namespace RayTracingLib
 {
     public class RayTraceHelper
     {
-        public static Bitmap Render(int width, int height, Sphere sphere, Color background, Light light)
+        public static Bitmap Render(int width, int height, List<Sphere> spheres, Bitmap background, Light light)
         {
             var fov = (float)(Math.PI / 3f);
 
@@ -31,10 +32,11 @@ namespace RayTracingLib
 
                     var vdir = new Vec3f(dirx, diry, dirz).Normalize();
 
-                    framebuffer[i + j * width] = CastRay(vcam, vdir, sphere, background, light);
+                    var backgroundPixel = GetArrayPixelBackground(i, j, background);
+
+                    framebuffer[i + j * width] = CastRay(vcam, vdir, spheres, backgroundPixel, light);
                 }
             }
-
             return CreateImage(width, height, framebuffer);
         }
 
@@ -45,26 +47,30 @@ namespace RayTracingLib
         /// <param name="dir"></param>
         /// <param name="sphere"></param>
         /// <returns></returns>
-        private static Color CastRay(Vec3f orig, Vec3f dir, Sphere sphere, Color background, Light light)
+        private static Color CastRay(Vec3f orig, Vec3f dir, List<Sphere> spheres, Color background, Light light)
         {
-            var N = new Vec3f();
+            var n = new Vec3f();
             var point = new Vec3f();
+            var material = new Material();
+            var result = new Vec3f();
 
-
-            if (!sphere.IsSphereIntersect(orig, dir, sphere, ref point, ref N, ref sphere.Material))
+            if (!Sphere.IsSphereIntersect(orig, dir, spheres, ref point, ref n, ref material))
             {
                 return background;
             }
-
             var diffuseLightIntensity = 0f;
+
+            var specularLightIntensity = 0f;
 
             var lightDir = (light.position - point).Normalize();
 
             var lightDistance = (light.position - point).Norm();
 
-            diffuseLightIntensity += light.intensity * Math.Max(0, lightDir * N);
+            diffuseLightIntensity += light.intensity * Math.Max(0, lightDir * n);
 
-            var result = sphere.Material.DiffColor * diffuseLightIntensity * sphere.Material.Albedo[0];
+            specularLightIntensity += (float)Math.Pow(Math.Max(0f, Reflect(lightDir, n) * dir), material.SpecExp) * light.intensity;
+
+            result = material.DiffColor * diffuseLightIntensity * material.Albedo[0] + new Vec3f(1f, 1f, 1f) * specularLightIntensity * material.Albedo[1];
 
             return Color.FromArgb(255, (int)(result.x), (int)(result.y), (int)(result.z));
         }
@@ -88,6 +94,18 @@ namespace RayTracingLib
                     return new Bitmap(width, height, width * 4, PixelFormat.Format32bppArgb, new IntPtr(ptr));
                 }
             }
+        }
+
+        public static Vec3f Reflect(Vec3f I, Vec3f N)
+        {
+            return I - N * 2f * (N * I);
+        }
+
+        public static Color GetArrayPixelBackground(int i, int j, Bitmap backgroundImage)
+        {
+            var backgroundPixel = backgroundImage.GetPixel(i, j);
+
+            return backgroundPixel;
         }
     }
 }

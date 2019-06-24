@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using RayTracingLib;
 using static Geometry.Geometry;
@@ -111,20 +112,24 @@ namespace Geometry
             return true;
         }
 
-        public bool IsSphereIntersect(Vec3f orig, Vec3f dir, Sphere sphere, ref Vec3f hit, ref Vec3f N, ref Material material)
+        public static bool IsSphereIntersect(Vec3f orig, Vec3f dir, List<Sphere> spheres, ref Vec3f hit, ref Vec3f N, ref Material material)
         {
             var spheresDist = float.MaxValue;
-            var disti = 0f;
 
-            if (sphere.RayIntersect(orig, dir, ref disti) && disti < spheresDist)
+            foreach (var s in spheres)
             {
-                spheresDist = disti;
+                var disti = 0f;
 
-                hit = orig + dir * disti;
+                if (s.RayIntersect(orig, dir, ref disti) && disti < spheresDist)
+                {
+                    spheresDist = disti;
 
-                N = (hit - sphere.Center).Normalize();
+                    hit = orig + dir * disti;
 
-                material = sphere.Material;
+                    N = (hit - s.Center).Normalize();
+
+                    material = s.Material;
+                }
             }
             return spheresDist < 1000;
         }
