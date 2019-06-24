@@ -46,6 +46,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Geometry.cs" />
+    <Compile Include="Light.cs" />
+    <Compile Include="Material.cs" />
     <Compile Include="RayTraceHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

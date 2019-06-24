@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Drawing;
 using Geometry;
+using RayTracingLib;
 
 namespace Geometry
 {
     public class Geometry
     {
-
         public class Vec3f
         {
             public float x;
@@ -29,14 +29,14 @@ namespace Geometry
                 get { return i <= 0 ? x : (i == 1 ? y : z); }
             }
 
-            public float norm()
+            public float Norm()
             {
                 return (float)Math.Sqrt(x * x + y * y + z * z);
             }
 
-            public Vec3f normalize()
+            public Vec3f Normalize()
             {
-                return this / norm();
+                return this / Norm();
             }
 
             public float[] ToArray()
@@ -79,10 +79,10 @@ namespace Geometry
     {
         public Geometry.Vec3f Center;
         public float Radius;
-        public Color Color;
+
         public Material Material;
 
-        public Sphere(Geometry.Vec3f center, float radius, Color color, Material material)
+        public Sphere(Geometry.Vec3f center, float radius, Material material)
         {
             Center = center;
             Radius = radius;
@@ -125,41 +125,6 @@ namespace Geometry
             return spheresDist < 1000;
         }
     }
-    public class Light
-    {
-        public Geometry.Vec3f position;
-        public float intensity;
-
-        public Light(Geometry.Vec3f position, float intensity)
-        {
-            this.position = position;
-            this.intensity = intensity;
-        }
-    }
-    public class Material
-    {
-        public float RefIndex;
-        public Geometry.Vec3f DiffColor;
-        public float SpecExp;
-        public float[] Albedo;
-
-        public Material(float refIndex, float[] albedo, Color diffColor, float specExp)
-        {
-            RefIndex = refIndex;
-            Albedo = albedo;
-            DiffColor = new Geometry.Vec3f(diffColor.R, diffColor.G, diffColor.B);
-            SpecExp = specExp;
-        }
-
-        public Material()
-        {
-            RefIndex = 1;
-            SpecExp = 0;
-            Albedo = new[] { 1f, 0f, 0f, 0f };
-
-            DiffColor = new Geometry.Vec3f();
-        }
-    }
 }
 
- 
+
