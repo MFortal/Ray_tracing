@@ -14,11 +14,11 @@ namespace RayTracingLib
         public float SpecExp;
         public float[] Albedo;
 
-        public Material(float refIndex, float[] albedo, Geometry.Geometry.Vec3f diffColor, float specExp)
+        public Material(float refIndex, float[] albedo, Color diffColor, float specExp)
         {
             RefIndex = refIndex;
             Albedo = albedo;
-            DiffColor = diffColor;
+            DiffColor = new Geometry.Geometry.Vec3f(diffColor.R, diffColor.G, diffColor.B);
             SpecExp = specExp;
         }
 

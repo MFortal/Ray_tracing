@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
-using Geometry;
 using RayTracingLib;
+using static Geometry.Geometry;
 
 namespace Geometry
 {
@@ -77,19 +77,19 @@ namespace Geometry
     }
     public class Sphere
     {
-        public Geometry.Vec3f Center;
+        public Vec3f Center;
         public float Radius;
 
         public Material Material;
 
-        public Sphere(Geometry.Vec3f center, float radius, Material material)
+        public Sphere(Vec3f center, float radius, Color color, Material material)
         {
             Center = center;
             Radius = radius;
             Material = material;
         }
 
-        public bool RayIntersect(Geometry.Vec3f orig, Geometry.Vec3f dir, ref float t0)
+        public bool RayIntersect(Vec3f orig, Vec3f dir, ref float t0)
         {
             var L = Center - orig;
 
@@ -112,7 +112,7 @@ namespace Geometry
             return true;
         }
 
-        public bool IsSphereIntersect(Geometry.Vec3f orig, Geometry.Vec3f dir, Sphere sphere, Material material)
+        public bool IsSphereIntersect(Vec3f orig, Vec3f dir, Sphere sphere, ref Vec3f hit, ref Vec3f N, ref Material material)
         {
             var spheresDist = float.MaxValue;
             var disti = 0f;
@@ -120,6 +120,11 @@ namespace Geometry
             if (sphere.RayIntersect(orig, dir, ref disti) && disti < spheresDist)
             {
                 spheresDist = disti;
+
+                hit = orig + dir * disti;
+
+                N = (hit - sphere.Center).Normalize();
+
                 material = sphere.Material;
             }
             return spheresDist < 1000;

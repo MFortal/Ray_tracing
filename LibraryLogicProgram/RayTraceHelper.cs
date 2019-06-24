@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using Geometry;
+using static Geometry.Geometry;
 
 
 namespace RayTracingLib
@@ -30,7 +31,7 @@ namespace RayTracingLib
 
                     var vdir = new Geometry.Geometry.Vec3f(dirx, diry, dirz).Normalize();
 
-                    framebuffer[i + j * width] = CastRay(vcam, vdir, sphere, background, sphere.Material, light);
+                    framebuffer[i + j * width] = CastRay(vcam, vdir, sphere, background, light);
                 }
             }
             return CreateImage(width, height, framebuffer);
@@ -43,29 +44,30 @@ namespace RayTracingLib
         /// <param name="dir"></param>
         /// <param name="sphere"></param>
         /// <returns></returns>
-        private static Color CastRay(Geometry.Geometry.Vec3f orig, Geometry.Geometry.Vec3f dir, Sphere sphere, Color background, Material material, Light light)
+        private static Color CastRay(Geometry.Geometry.Vec3f orig, Geometry.Geometry.Vec3f dir, Sphere sphere, Color background, Light light)
         {
             var N = new Geometry.Geometry.Vec3f();
+            var point = new Vec3f();
 
-            if (!sphere.IsSphereIntersect(orig, dir, sphere, material))
+
+            if (!sphere.IsSphereIntersect(orig, dir, sphere, ref point, ref N, ref sphere.Material))
             {
                 return background;
             }
 
-            var diffuseLightIntensity = 0.5f;
-            var lightDir = (light.position - N).Normalize();
+            var diffuseLightIntensity = 0f;
+
+            var lightDir = (light.position - point).Normalize();
+
+            var lightDistance = (light.position - point).Norm();
+
             diffuseLightIntensity += light.intensity * Math.Max(0, lightDir * N);
 
-            var lightresult = material.DiffColor * diffuseLightIntensity;
+            var result = sphere.Material.DiffColor * diffuseLightIntensity * sphere.Material.Albedo[0];
 
-            if (lightresult.x > 255) lightresult.x = 255;
-            if (lightresult.y > 255) lightresult.y = 255;
-            if (lightresult.z > 255) lightresult.z = 255;
+            sphere.Material.DiffColor = result;
 
-            Color sphere_color=new Color();
-            sphere_color =  Color.FromArgb(255,(int)(lightresult.x), (int)(lightresult.y), (int)(lightresult.z));
-
-            return sphere_color;
+            return Color.FromArgb((int)result.x, (int)result.y, (int)result.z);
         }
         
         public static Bitmap CreateImage(int width, int height, Color[] imageData)
