@@ -76,6 +76,7 @@ namespace Geometry
             }
         }
     }
+
     public class Sphere
     {
         public Vec3f Center;
@@ -99,7 +100,7 @@ namespace Geometry
 
             if (d2 > Radius * Radius) return false;
 
-            var thc = (float)Math.Sqrt(Radius * Radius - d2);
+            var thc = (float) Math.Sqrt(Radius * Radius - d2);
 
             t0 = tca - thc;
 
@@ -112,25 +113,27 @@ namespace Geometry
             return true;
         }
 
-        public static bool IsSphereIntersect(Vec3f orig, Vec3f dir, List<Sphere> spheres, ref Vec3f hit, ref Vec3f N, ref Material material)
+        public static bool IsSphereIntersect(Vec3f orig, Vec3f dir, List<Sphere> spheres, ref Vec3f hit, ref Vec3f N,
+            ref Material material)
         {
             var spheresDist = float.MaxValue;
 
-            foreach (var s in spheres)
+            foreach (var sphere in spheres)
             {
                 var disti = 0f;
 
-                if (s.RayIntersect(orig, dir, ref disti) && disti < spheresDist)
+                if (sphere.RayIntersect(orig, dir, ref disti) && disti < spheresDist)
                 {
                     spheresDist = disti;
 
                     hit = orig + dir * disti;
 
-                    N = (hit - s.Center).Normalize();
+                    N = (hit - sphere.Center).Normalize();
 
-                    material = s.Material;
+                    material = sphere.Material;
                 }
             }
+
             return spheresDist < 1000;
         }
     }

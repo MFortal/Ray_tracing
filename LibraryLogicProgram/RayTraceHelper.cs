@@ -10,6 +10,7 @@ namespace RayTracingLib
 {
     public class RayTraceHelper
     {
+
         public static Bitmap Render(int width, int height, List<Sphere> spheres, Bitmap background, List<Light> lights)
         {
             var fov = (float)(Math.PI / 3f);
@@ -38,6 +39,7 @@ namespace RayTracingLib
             return CreateImage(width, height, framebuffer);
         }
 
+
         /// <summary>
         /// Цвет пикселя
         /// </summary>
@@ -45,22 +47,27 @@ namespace RayTracingLib
         /// <param name="dir"></param>
         /// <param name="sphere"></param>
         /// <returns></returns>
-        private static Color CastRay(Vec3f orig, Vec3f dir, List<Sphere> spheres, Color background, List<Light> lights)
+        private static Color CastRay(Vec3f orig, Vec3f dir, List<Sphere> spheres, Color background, List<Light> lights, int depth = 0)
         {
             var n = new Vec3f();
             var point = new Vec3f();
             var material = new Material();
             var result = new Vec3f();
 
-            if (!Sphere.IsSphereIntersect(orig, dir, spheres, ref point, ref n, ref material))
+            if (depth > 4 || !Sphere.IsSphereIntersect(orig, dir, spheres, ref point, ref n, ref material))
             {
                 return background;
             }
 
-            var diffuseLightIntensity = 0f;
-
             var _n = n * 1e-3f;
 
+            var reflectDir = Reflect(dir, n).Normalize();
+            var reflectOrig = reflectDir * n < 0 ? point - _n : point + _n;
+            var reflectColor = CastRay(reflectOrig, reflectDir, spheres, background, lights, depth + 1);
+            var reflectVec = new Vec3f(reflectColor.R, reflectColor.G, reflectColor.B);
+
+            var diffuseLightIntensity = 0f;
+            
             foreach (var light in lights)
             {
                 var lightDir = (light.position - point).Normalize();
@@ -81,7 +88,7 @@ namespace RayTracingLib
                 diffuseLightIntensity += light.intensity * Math.Max(0f, lightDir * n);
             }
 
-            result = material.DiffColor * diffuseLightIntensity * material.Albedo[0];
+            result = material.DiffColor * diffuseLightIntensity * material.Albedo[0]+reflectVec*material.Albedo[2];
 
             if (result.x > 255) result.x = 255;
             if (result.y > 255) result.y = 255;
@@ -89,6 +96,13 @@ namespace RayTracingLib
 
             return Color.FromArgb(255, (int)(result.x), (int)(result.y), (int)(result.z));
         }
+
+
+        public static Vec3f Reflect(Vec3f I, Vec3f N)
+        {
+            return I - N * 2f * (I * N);
+        }
+
 
         public static Bitmap CreateImage(int width, int height, Color[] imageData)
         {
