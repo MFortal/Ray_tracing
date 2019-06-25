@@ -58,13 +58,27 @@ namespace RayTracingLib
             }
 
             var diffuseLightIntensity = 0f;
+
+            var _n = n * 1e-3f;
+
             foreach (var light in lights)
             {
                 var lightDir = (light.position - point).Normalize();
 
                 var lightDistance = (light.position - point).Norm();
 
-                diffuseLightIntensity += light.intensity * Math.Max(0, lightDir * n);
+                var shadow_orig = lightDir * n < 0 ? point - _n : point + _n;
+
+                var shadow_pt = new Vec3f();
+
+                var shadow_N = new Vec3f();
+
+                var tmpmaterial = new Material();
+
+                if (Sphere.IsSphereIntersect(shadow_orig, lightDir, spheres, ref shadow_pt, ref shadow_N, ref tmpmaterial) && (shadow_pt - shadow_orig).Norm() < lightDistance)
+                    continue;
+
+                diffuseLightIntensity += light.intensity * Math.Max(0f, lightDir * n);
             }
 
             result = material.DiffColor * diffuseLightIntensity * material.Albedo[0];
