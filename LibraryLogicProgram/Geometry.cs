@@ -116,6 +116,7 @@ namespace Geometry
         public static bool IsSphereIntersect(Vec3f orig, Vec3f dir, List<Sphere> spheres, ref Vec3f hit, ref Vec3f N, ref Material material)
         {
             var spheresDist = float.MaxValue;
+            var checkerboardDist = float.MaxValue;
 
             foreach (var sphere in spheres)
             {
@@ -132,7 +133,26 @@ namespace Geometry
                     material = sphere.Material;
                 }
             }
-            return spheresDist < 1000;
+  
+            if (Math.Abs(dir.y) > 1e-3)
+            {
+                var d = -(orig.y + 4) / dir.y;
+                var pt = orig + dir * d;
+                if (d > 0 && Math.Abs(pt.x) < 10 && pt.z < -10 && pt.z > -30 && d < spheresDist)
+                {
+                    checkerboardDist = d;
+                    hit = pt;
+
+                    N = new Vec3f(0, 1, 0);
+
+                    var _hitX = (int)(.5 * hit.x + 1000);
+                    var _hitZ = (int)(.5 * hit.z);
+
+                    material.DiffColor = ((_hitX + _hitZ) & 1) == 0 ? new Vec3f(255f, 255f, 255f) : new Vec3f(0f, 0f, 0f);
+                }
+            }
+            return Math.Min(spheresDist, checkerboardDist) < 1000;
+            //return spheresDist < 1000;
         }
     }
 }

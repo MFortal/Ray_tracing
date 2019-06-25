@@ -15,7 +15,7 @@ namespace TestingApp
             int width = 1024;
             int height = 768;
 
-            var backgroundImage = new Bitmap(@"C:/1/3.jpg");
+            var backgroundImage = new Bitmap(@"C:/1/back1.jpg");
 
             List<Light> lights = new List<Light>()
             {
