@@ -36,6 +36,7 @@ namespace RayTracingLib
                     framebuffer[i + j * width] = CastRay(vcam, vdir, spheres, backgroundPixel, lights);
                 }
             }
+
             return CreateImage(width, height, framebuffer);
         }
 
@@ -47,7 +48,8 @@ namespace RayTracingLib
         /// <param name="dir"></param>
         /// <param name="sphere"></param>
         /// <returns></returns>
-        private static Color CastRay(Vec3f orig, Vec3f dir, List<Sphere> spheres, Color background, List<Light> lights, int depth = 0)
+        private static Color CastRay(Vec3f orig, Vec3f dir, List<Sphere> spheres, Color background, List<Light> lights,
+            int depth = 0)
         {
             var n = new Vec3f();
             var point = new Vec3f();
@@ -59,22 +61,27 @@ namespace RayTracingLib
                 return background;
             }
 
-            var _n = n * 1e-3f;
-
             var reflectDir = Reflect(dir, n).Normalize();
-            var reflectOrig = reflectDir * n < 0 ? point - _n : point + _n;
+            var refractDir = Refract(dir, n, material.RefIndex).Normalize();
+
+            var reflectOrig = reflectDir * n < 0 ? point - n * 1e-3f : point + n * 1e-3f;
+            var refractOrig = refractDir * n < 0 ? point - n * 1e-3f : point + n * 1e-3f;
+
             var reflectColor = CastRay(reflectOrig, reflectDir, spheres, background, lights, depth + 1);
+            var refractColor = CastRay(refractOrig, refractDir, spheres, background, lights, depth + 1);
+
             var reflectVec = new Vec3f(reflectColor.R, reflectColor.G, reflectColor.B);
+            var refractVec = new Vec3f(refractColor.R, refractColor.G, refractColor.B);
 
             var diffuseLightIntensity = 0f;
-            
+
             foreach (var light in lights)
             {
                 var lightDir = (light.position - point).Normalize();
 
                 var lightDistance = (light.position - point).Norm();
 
-                var shadow_orig = lightDir * n < 0 ? point - _n : point + _n;
+                var shadow_orig = lightDir * n < 0 ? point - n * 1e-3f : point + n * 1e-3f;
 
                 var shadow_pt = new Vec3f();
 
@@ -82,13 +89,14 @@ namespace RayTracingLib
 
                 var tmpmaterial = new Material();
 
-                if (Sphere.IsSphereIntersect(shadow_orig, lightDir, spheres, ref shadow_pt, ref shadow_N, ref tmpmaterial) && (shadow_pt - shadow_orig).Norm() < lightDistance)
+                if (Sphere.IsSphereIntersect(shadow_orig, lightDir, spheres, ref shadow_pt, ref shadow_N,
+                        ref tmpmaterial) && (shadow_pt - shadow_orig).Norm() < lightDistance)
                     continue;
 
                 diffuseLightIntensity += light.intensity * Math.Max(0f, lightDir * n);
             }
 
-            result = material.DiffColor * diffuseLightIntensity * material.Albedo[0]+reflectVec*material.Albedo[2];
+            result = material.DiffColor * diffuseLightIntensity * material.Albedo[0] + reflectVec * material.Albedo[2] + refractVec * material.Albedo[3];
 
             if (result.x > 255) result.x = 255;
             if (result.y > 255) result.y = 255;
@@ -97,12 +105,44 @@ namespace RayTracingLib
             return Color.FromArgb(255, (int)(result.x), (int)(result.y), (int)(result.z));
         }
 
-
+        /// <summary>
+        /// Зеркальная поверхность
+        /// </summary>
+        /// <param name="I"></param>
+        /// <param name="N"></param>
+        /// <returns></returns>
         public static Vec3f Reflect(Vec3f I, Vec3f N)
         {
             return I - N * 2f * (I * N);
         }
 
+        /// <summary>
+        /// Преломления
+        /// </summary>
+        /// <returns></returns>
+        public static Vec3f Refract(Vec3f I, Vec3f N, float refIndex)
+        {
+            float cosI = -Math.Max(-1f, Math.Min(1f, I * N));
+            float etaI = 1;
+            float etat = refIndex;
+            var n = N;
+
+            if (cosI < 0)
+            {
+                cosI = -cosI;
+                var _eta = etaI;
+                etaI = etat;
+                etat = _eta;
+                n = -N;
+            }
+
+            var eta = etaI / etat;
+            float k = 1 - eta * eta * (1 - cosI * cosI);
+
+            var _n = n * (float)(eta * cosI - Math.Sqrt(k));
+
+            return k < 0 ? new Vec3f(0, 0, 0) : I * eta + _n;
+        }
 
         public static Bitmap CreateImage(int width, int height, Color[] imageData)
         {
