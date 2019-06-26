@@ -74,6 +74,7 @@ namespace RayTracingLib
             var refractVec = new Vec3f(refractColor.R, refractColor.G, refractColor.B);
 
             var diffuseLightIntensity = 0f;
+            var specularLightIntensity = 0f;
 
             foreach (var light in lights)
             {
@@ -94,9 +95,10 @@ namespace RayTracingLib
                     continue;
 
                 diffuseLightIntensity += light.intensity * Math.Max(0f, lightDir * n);
+                specularLightIntensity += (float)Math.Pow(Math.Max(0d, -Reflect(-lightDir, n) * dir), material.SpecExp);
             }
 
-            result = material.DiffColor * diffuseLightIntensity * material.Albedo[0] + reflectVec * material.Albedo[2] + refractVec * material.Albedo[3];
+            result = material.DiffColor * diffuseLightIntensity + new Vec3f(1, 1, 1) * specularLightIntensity + reflectVec + refractVec;
 
             if (result.x > 255) result.x = 255;
             if (result.y > 255) result.y = 255;
@@ -106,7 +108,7 @@ namespace RayTracingLib
         }
 
         /// <summary>
-        /// Зеркальная поверхность
+        /// Отражающая поверхность
         /// </summary>
         /// <param name="I"></param>
         /// <param name="N"></param>
@@ -149,8 +151,10 @@ namespace RayTracingLib
 
             byte[] data = new byte[width * height * 4];
             int l = 0;
+
             for (int i = 0; i < imageData.Length; i++)
             {
+
                 data[l++] = imageData[i].B;
                 data[l++] = imageData[i].G;
                 data[l++] = imageData[i].R;

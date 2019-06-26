@@ -152,7 +152,6 @@ namespace Geometry
                 }
             }
             return Math.Min(spheresDist, checkerboardDist) < 1000;
-            //return spheresDist < 1000;
         }
     }
 }
