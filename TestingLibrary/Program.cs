@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using Geometry;
 using RayTracingLib;
@@ -13,10 +14,24 @@ namespace TestingApp
     {
         static void Main(string[] args)
         {
+
+            List<Vec3f> verts = new List<Vec3f>();
+            foreach (var line in File.ReadAllLines("C:/1/cube.obj"))
+            {
+                if (line.StartsWith("v "))
+                {
+                    var currentVerts = line.Replace(".",",").Split(' ');
+                    verts.Add(new Vec3f(float.Parse(currentVerts[1]),
+                        float.Parse(currentVerts[2]),
+                        float.Parse(currentVerts[3])
+                        ));
+                }
+            }
+
             int width = 1024;
             int height = 768;
 
-            var backgroundImage = new Bitmap(@"C:/1/back1.jpg");
+            var backgroundImage = new Bitmap(@"C:/1/back.jpg");
             
             List<Light> lights = new List<Light>()
             {
@@ -37,14 +52,20 @@ namespace TestingApp
                new Material(1.5f, new[] {0,  .5f, .1f, .8f}, Color.Yellow, 125)
             };
 
-            List<Sphere> spheres = new List<Sphere>()
+            List<ObjectBase> objects = new List<ObjectBase>()
             {
-                new Sphere(new Vec3f(-3,    0,   -16), 2, materials[0]),
+                new Sphere(new Vec3f(-3, 0, -16), 2, materials[0]),
                 new Sphere(new Vec3f(4f, -1.5f, -12), 2F, materials[3]),
                 new Sphere(new Vec3f(1.5f, -0.5f, -18), 3F, materials[2]),
-                new Sphere(new Vec3f(7,    5,   -18), 4F, materials[1])
+                new Sphere(new Vec3f(7,    5,   -18), 4F, materials[1]),
+                new CheckerBoard(),
             };
-            RayTraceHelper.Render(width, height, spheres, backgroundImage, lights).Save("C:/1/1.jpg");
+
+            RayTraceHelper.Render(width, height, objects, backgroundImage, lights).Save("C:/1/1.jpg");
+
+
+
+          
         }
     }
 }
