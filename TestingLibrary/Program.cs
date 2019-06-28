@@ -5,7 +5,9 @@ using System.IO;
 using System.Linq;
 using Geometry;
 using RayTracingLib;
+using static System.Configuration.ConfigurationSettings;
 using static Geometry.Geometry;
+using System.Configuration;
 
 
 namespace TestingApp
@@ -14,32 +16,21 @@ namespace TestingApp
     {
         static void Main(string[] args)
         {
-
-            List<Vec3f> verts = new List<Vec3f>();
-            foreach (var line in File.ReadAllLines("C:/1/cube.obj"))
-            {
-                if (line.StartsWith("v "))
-                {
-                    var currentVerts = line.Replace(".",",").Split(' ');
-                    verts.Add(new Vec3f(float.Parse(currentVerts[1]),
-                        float.Parse(currentVerts[2]),
-                        float.Parse(currentVerts[3])
-                        ));
-                }
-            }
-
             int width = 1024;
             int height = 768;
+            var filenameObj = ConfigurationManager.AppSettings["filenameObj"];
+            //var backgroundName = ConfigurationManager.AppSettings["backgroundImage"];
+            var nameSave = ConfigurationManager.AppSettings["nameSave"];
 
-            var backgroundImage = new Bitmap(@"C:/1/back.jpg");
-            
+            var backgroundImage = new Bitmap(@"C:/1/back/back1.jpg");
+
             List<Light> lights = new List<Light>()
             {
                 new Light(new Vec3f(-20, 20,  20), 1.5f),
                 new Light(new Vec3f( 30, 50, -25), 1.8f),
                 new Light( new Vec3f(30, 20, 30), 1.7f)
             };
-            
+
             List<Material> materials = new List<Material>()
             { 
                 //little specular
@@ -59,13 +50,10 @@ namespace TestingApp
                 new Sphere(new Vec3f(1.5f, -0.5f, -18), 3F, materials[2]),
                 new Sphere(new Vec3f(7,    5,   -18), 4F, materials[1]),
                 new CheckerBoard(),
+                new Cube(filenameObj)
             };
-
-            RayTraceHelper.Render(width, height, objects, backgroundImage, lights).Save("C:/1/1.jpg");
-
-
-
-          
+ 
+            RayTraceHelper.Render(width, height, objects, backgroundImage, lights).Save(nameSave);
         }
     }
 }

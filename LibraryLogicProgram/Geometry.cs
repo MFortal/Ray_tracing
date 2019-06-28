@@ -74,10 +74,13 @@ namespace Geometry
             {
                 return self * -1f;
             }
+
+            public static Vec3f Cross(Vec3f self, Vec3f other)
+            {
+                return new Vec3f(self.y * other.z - self.z * other.y, self.z * other.x - self.x * other.z, self.x * other.y - self.y * other.x);
+            }
         }
     }
-
-
 }
 
 

@@ -10,12 +10,14 @@ namespace RayTracingLib
 {
     public class ObjectBase
     {
-
         public virtual bool IsRayIntersect(Vec3f orig, Vec3f dir, ref Vec3f hit, ref Vec3f N,
             ref Material material)
         {
             return false;
         }
-
+        public virtual bool IsRayIntersect(Vec3f orig, Vec3f dir, ref Vec3f hit, ref Vec3f N, ref Material material, Vec3f v0, Vec3f v1, Vec3f v2)
+        {
+            return false;
+        }
     }
 }
