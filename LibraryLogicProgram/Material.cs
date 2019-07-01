@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using static Geometry.Geometry;
 
 namespace RayTracingLib
 {
-    public class Material
+    public class Material : IMaterial
     {
-        public float RefIndex;
-        public Vec3f DiffColor;
-        public float SpecExp;
-        public float[] Albedo;
-
+        public float RefIndex { get; set; }
+        public Vec3f DiffColor { get; set; }
+        public float SpecExp { get; set; }
+        public float[] Albedo { get; set; }
         public Material(float refIndex, float[] albedo, Color diffColor, float specExp)
         {
             RefIndex = refIndex;

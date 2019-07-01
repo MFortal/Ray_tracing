@@ -1,25 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static Geometry.Geometry;
 
 namespace RayTracingLib
 {
-    public class Sphere : ObjectBase
+    public class Sphere : ObjectBase, ISphere
     {
-        public Geometry.Geometry.Vec3f Center;
-        public float Radius;
-        public Material Material;
+        public Vec3f Center { get; set; }
+        public float Radius { get; set; }
+        public Material Material { get; set; }
 
-        public Sphere(Geometry.Geometry.Vec3f center, float radius, Material material)
+        public Sphere(Vec3f center, float radius, Material material)
         {
             Center = center;
             Radius = radius;
             Material = material;
         }
 
-        public bool RayIntersect(Geometry.Geometry.Vec3f orig, Geometry.Geometry.Vec3f dir, ref float t0)
+        private bool RayIntersect(Vec3f orig, Vec3f dir, ref float t0)
         {
             var L = Center - orig;
 
@@ -37,16 +34,13 @@ namespace RayTracingLib
 
             if (t0 < 0) t0 = t1;
 
-            if (t0 < 0) return false;
-
             return true;
         }
 
-        public override bool IsRayIntersect(Geometry.Geometry.Vec3f orig, Geometry.Geometry.Vec3f dir, ref Geometry.Geometry.Vec3f hit, ref Geometry.Geometry.Vec3f N, ref Material material)
+        public override bool IsRayIntersect(Vec3f orig, Vec3f dir, ref Vec3f hit, ref Vec3f N, ref Material material)
         {
             var spheresDist = float.MaxValue;
-            var checkerboardDist = float.MaxValue;
-
+            var MaxDist = float.MaxValue;
 
             var disti = 0f;
 
@@ -60,8 +54,7 @@ namespace RayTracingLib
 
                 material = Material;
             }
-
-            return Math.Min(spheresDist, checkerboardDist) < 1000;
+            return spheresDist < MaxDist;
         }
     }
 }

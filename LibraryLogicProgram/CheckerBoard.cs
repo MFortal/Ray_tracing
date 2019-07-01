@@ -7,13 +7,10 @@ using Geometry;
 
 namespace RayTracingLib
 {
-    public class CheckerBoard : ObjectBase
+    public class CheckerBoard : ObjectBase, ICheckerBoard
     {
-
-        public override bool IsRayIntersect(Geometry.Geometry.Vec3f orig, Geometry.Geometry.Vec3f dir, ref Geometry.Geometry.Vec3f hit, ref Geometry.Geometry.Vec3f N,
-            ref Material material)
+        public override bool IsRayIntersect(Geometry.Geometry.Vec3f orig, Geometry.Geometry.Vec3f dir, ref Geometry.Geometry.Vec3f hit, ref Geometry.Geometry.Vec3f N, ref Material material)
         {
-
             var MaxDisctance = float.MaxValue;
             var checkerboardDist = float.MaxValue;
 
@@ -32,13 +29,9 @@ namespace RayTracingLib
                     var _hitZ = (int)(.5 * hit.z);
 
                     material.DiffColor = ((_hitX + _hitZ) & 1) == 0 ? new Geometry.Geometry.Vec3f(255f, 255f, 255f) : new Geometry.Geometry.Vec3f(0f, 0f, 0f);
-
-                    
                 }
             }
-
             return checkerboardDist < MaxDisctance;
         }
-
     }
 }
