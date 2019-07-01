@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using Geometry;
 using RayTracingLib;
-using static System.Configuration.ConfigurationSettings;
 using static Geometry.Geometry;
 
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using static Geometry.Geometry;
 
 namespace Geometry
 {

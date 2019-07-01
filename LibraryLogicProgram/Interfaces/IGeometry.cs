@@ -7,7 +7,7 @@ namespace Geometry
         float y { get; set; }
         float z { get; set; }
 
-        //float Norm();
-       // Vec3f Normalize();
+        float Norm();
+        Vec3f Normalize();
     }
 }

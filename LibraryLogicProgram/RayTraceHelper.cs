@@ -61,9 +61,6 @@ namespace RayTracingLib
         /// <returns></returns>
         private static Color CastRay(Vec3f orig, Vec3f dir, List<IObjectBase> objects, Color background, List<Light> lights, int depth = 0)
         {
-
-
-
             foreach (var _object in objects)
             {
                 var n = new Vec3f();
@@ -78,14 +75,14 @@ namespace RayTracingLib
                     var reflectDir = Reflect(dir, n).Normalize();
                     var refractDir = Refract(dir, n, material.RefIndex).Normalize();
 
-                    //var reflectOrig = reflectDir * n < 0 ? point - n * 1e-3f : point + n * 1e-3f;
-                    //var refractOrig = refractDir * n < 0 ? point - n * 1e-3f : point + n * 1e-3f;
+                    var reflectOrig = reflectDir * n < 0 ? point - n * 1e-3f : point + n * 1e-3f;
+                    var refractOrig = refractDir * n < 0 ? point - n * 1e-3f : point + n * 1e-3f;
 
-                    //var reflectColor = CastRay(reflectOrig, reflectDir, objects, background, lights, depth + 1);
-                    //var refractColor = CastRay(refractOrig, refractDir, objects, background, lights, depth + 1);
+                    var reflectColor = CastRay(reflectOrig, reflectDir, objects, background, lights, depth + 1);
+                    var refractColor = CastRay(refractOrig, refractDir, objects, background, lights, depth + 1);
 
-                    //var reflectVec = new Vec3f(reflectColor.R, reflectColor.G, reflectColor.B);
-                    //var refractVec = new Vec3f(refractColor.R, refractColor.G, refractColor.B);
+                    var reflectVec = new Vec3f(reflectColor.R, reflectColor.G, reflectColor.B);
+                    var refractVec = new Vec3f(refractColor.R, refractColor.G, refractColor.B);
 
                     var diffuseLightIntensity = 0f;
                     var specularLightIntensity = 0f;
@@ -111,7 +108,7 @@ namespace RayTracingLib
                         specularLightIntensity += (float)Math.Pow(Math.Max(0d, -Reflect(-lightDir, n) * dir), material.SpecExp);
                     }
 
-                    result = material.DiffColor * diffuseLightIntensity * material.Albedo[0] + new Vec3f(255, 255, 255) * specularLightIntensity * material.Albedo[1]; //+ reflectVec * material.Albedo[2] + refractVec * material.Albedo[3];
+                    result = material.DiffColor * diffuseLightIntensity * material.Albedo[0] + new Vec3f(255, 255, 255) * specularLightIntensity * material.Albedo[1] + reflectVec * material.Albedo[2] + refractVec * material.Albedo[3];
 
                     if (result.x > 255) result.x = 255;
                     if (result.y > 255) result.y = 255;
@@ -119,7 +116,7 @@ namespace RayTracingLib
 
                     return Color.FromArgb(255, (int)(result.x), (int)(result.y), (int)(result.z));
                 }
-              
+
             }
             return background;
         }
