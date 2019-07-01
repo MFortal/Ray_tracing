@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using RayTracingLib;
 using static Geometry.Geometry;
 
 namespace Geometry
 {
     public class Geometry
     {
-        public class Vec3f
+        public class Vec3f : IGeometry
         {
-            public float x;
-            public float y;
-            public float z;
+            public float x { get; set; }
+            public float y { get; set; }
+            public float z { get; set; }
 
             public Vec3f(float x, float y, float z)
             {

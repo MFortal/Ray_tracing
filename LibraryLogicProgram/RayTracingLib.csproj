@@ -48,6 +48,12 @@
     <Compile Include="CheckerBoard.cs" />
     <Compile Include="Cube.cs" />
     <Compile Include="Geometry.cs" />
+    <Compile Include="Interfaces\ICheckerBoard.cs" />
+    <Compile Include="Interfaces\ILight.cs" />
+    <Compile Include="Interfaces\IMaterial.cs" />
+    <Compile Include="Interfaces\IGeometry.cs" />
+    <Compile Include="Interfaces\IObjectBase.cs" />
+    <Compile Include="Interfaces\ISphere.cs" />
     <Compile Include="Light.cs" />
     <Compile Include="Material.cs" />
     <Compile Include="ObjectBase.cs" />

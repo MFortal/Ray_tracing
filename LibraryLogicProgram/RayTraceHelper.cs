@@ -10,9 +10,18 @@ namespace RayTracingLib
 {
     public class RayTraceHelper
     {
-        public static Bitmap Render(int width, int height, List<ObjectBase> objects, Bitmap background, List<Light> lights)
+        //public Bitmap RayTraceHelper(RayTracerRequest  request)
+        //{
+
+        //};
+
+        public static Bitmap Render(int width, int height, List<IObjectBase> objects, Bitmap background, List<Light> lights)
         {
-            //угол обзора
+            return CalculateBitmap(width, height, objects, background, lights);
+        }
+
+        private static Bitmap CalculateBitmap(int width, int height, List<IObjectBase> objects, Bitmap background, List<Light> lights)
+        {
             var fov = (float)(Math.PI / 3f);
 
             var framebuffer = new Color[width * height];
@@ -50,9 +59,11 @@ namespace RayTracingLib
         /// <param name="lights"></param>
         /// <param name="depth">Глубина рекурсии</param>
         /// <returns></returns>
-        private static Color CastRay(Vec3f orig, Vec3f dir, List<ObjectBase> objects, Color background, List<Light> lights,
-            int depth = 0)
+        private static Color CastRay(Vec3f orig, Vec3f dir, List<IObjectBase> objects, Color background, List<Light> lights, int depth = 0)
         {
+
+
+
             foreach (var _object in objects)
             {
                 var n = new Vec3f();
@@ -61,23 +72,11 @@ namespace RayTracingLib
                 var result = new Vec3f();
                 var boolVar = false;
 
-                var cube = _object as Cube;
-                if (cube == null)
+                if (depth < 4 && _object.IsRayIntersect(orig, dir, ref point, ref n, ref material))
                 {
-                    boolVar = _object.IsRayIntersect(orig, dir, ref point, ref n, ref material);
-                }
-                else
-                {
-                    for (int i = 0; i < cube.verts.Count - 2; i++)
-                    {
-                        boolVar = _object.IsRayIntersect(orig, dir, ref point, ref  n, ref material, cube.verts[i], cube.verts[i + 1], cube.verts[i + 2]);
-                    }
-                }
-                 
-                if (depth<=4 && boolVar)
-                {
-                    //var reflectDir = Reflect(dir, n).Normalize();
-                    //var refractDir = Refract(dir, n, material.RefIndex).Normalize();
+
+                    var reflectDir = Reflect(dir, n).Normalize();
+                    var refractDir = Refract(dir, n, material.RefIndex).Normalize();
 
                     //var reflectOrig = reflectDir * n < 0 ? point - n * 1e-3f : point + n * 1e-3f;
                     //var refractOrig = refractDir * n < 0 ? point - n * 1e-3f : point + n * 1e-3f;
@@ -104,15 +103,15 @@ namespace RayTracingLib
                         var shadow_N = new Vec3f();
 
                         var tmpmaterial = new Material();
-                        
-                        //добавить для куба
-                            if (_object.IsRayIntersect(shadow_orig, lightDir, ref shadow_pt, ref shadow_N, ref tmpmaterial) && (shadow_pt - shadow_orig).Norm() < lightDistance) continue;
+
+                        if (_object.IsRayIntersect(shadow_orig, lightDir, ref shadow_pt, ref shadow_N, ref tmpmaterial) && (shadow_pt - shadow_orig).Norm() < lightDistance)
+                            continue;
 
                         diffuseLightIntensity += light.intensity * Math.Max(0f, lightDir * n);
                         specularLightIntensity += (float)Math.Pow(Math.Max(0d, -Reflect(-lightDir, n) * dir), material.SpecExp);
                     }
 
-                    result = material.DiffColor * diffuseLightIntensity + new Vec3f(1, 1, 1) * specularLightIntensity; //* material.Albedo[1]+ reflectVec * material.Albedo[2] + refractVec * material.Albedo[3];
+                    result = material.DiffColor * diffuseLightIntensity * material.Albedo[0] + new Vec3f(255, 255, 255) * specularLightIntensity * material.Albedo[1]; //+ reflectVec * material.Albedo[2] + refractVec * material.Albedo[3];
 
                     if (result.x > 255) result.x = 255;
                     if (result.y > 255) result.y = 255;
@@ -120,6 +119,7 @@ namespace RayTracingLib
 
                     return Color.FromArgb(255, (int)(result.x), (int)(result.y), (int)(result.z));
                 }
+              
             }
             return background;
         }
@@ -130,7 +130,7 @@ namespace RayTracingLib
         /// <param name="I"></param>
         /// <param name="N"></param>
         /// <returns></returns>
-        public static Vec3f Reflect(Vec3f I, Vec3f N)
+        private static Vec3f Reflect(Vec3f I, Vec3f N)
         {
             return I - N * 2f * (I * N);
         }
@@ -139,7 +139,7 @@ namespace RayTracingLib
         /// Преломления
         /// </summary>
         /// <returns></returns>
-        public static Vec3f Refract(Vec3f I, Vec3f N, float refIndex)
+        private static Vec3f Refract(Vec3f I, Vec3f N, float refIndex)
         {
             float cosI = -Math.Max(-1f, Math.Min(1f, I * N));
             float etaI = 1;
@@ -163,7 +163,7 @@ namespace RayTracingLib
             return k < 0 ? new Vec3f(0, 0, 0) : I * eta + _n;
         }
 
-        public static Bitmap CreateImage(int width, int height, Color[] imageData)
+        private static Bitmap CreateImage(int width, int height, Color[] imageData)
         {
             byte[] data = new byte[width * height * 4];
             int l = 0;

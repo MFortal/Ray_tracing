@@ -1,10 +1,10 @@
 ﻿using static Geometry.Geometry;
 namespace RayTracingLib
 {
-    public class Light
+    public class Light : ILight
     {
-        public Vec3f position;
-        public float intensity;
+        public Vec3f position { get; set; }
+        public float intensity { get; set; }
 
         public Light(Vec3f position, float intensity)
         {

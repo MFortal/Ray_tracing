@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -7,7 +8,6 @@ using Geometry;
 using RayTracingLib;
 using static System.Configuration.ConfigurationSettings;
 using static Geometry.Geometry;
-using System.Configuration;
 
 
 namespace TestingApp
@@ -18,11 +18,11 @@ namespace TestingApp
         {
             int width = 1024;
             int height = 768;
-            var filenameObj = ConfigurationManager.AppSettings["filenameObj"];
-            //var backgroundName = ConfigurationManager.AppSettings["backgroundImage"];
+
+            var backgroundName = ConfigurationManager.AppSettings["backgroundImage"];
             var nameSave = ConfigurationManager.AppSettings["nameSave"];
 
-            var backgroundImage = new Bitmap(@"C:/1/back/back1.jpg");
+            var backgroundImage = new Bitmap(backgroundName);
 
             List<Light> lights = new List<Light>()
             {
@@ -43,16 +43,14 @@ namespace TestingApp
                new Material(1.5f, new[] {0,  .5f, .1f, .8f}, Color.Yellow, 125)
             };
 
-            List<ObjectBase> objects = new List<ObjectBase>()
+            List<IObjectBase> objects = new List<IObjectBase>()
             {
                 new Sphere(new Vec3f(-3, 0, -16), 2, materials[0]),
                 new Sphere(new Vec3f(4f, -1.5f, -12), 2F, materials[3]),
                 new Sphere(new Vec3f(1.5f, -0.5f, -18), 3F, materials[2]),
                 new Sphere(new Vec3f(7,    5,   -18), 4F, materials[1]),
-                new CheckerBoard(),
-                new Cube(filenameObj)
+                new CheckerBoard()
             };
- 
             RayTraceHelper.Render(width, height, objects, backgroundImage, lights).Save(nameSave);
         }
     }

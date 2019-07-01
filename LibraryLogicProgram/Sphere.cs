@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Geometry.Geometry;
 
 namespace RayTracingLib
 {
-    public class Sphere : ObjectBase
+    public class Sphere : ObjectBase, ISphere
     {
-        public Vec3f Center;
-        public float Radius;
-        public Material Material;
+        public Vec3f Center { get; set; }
+        public float Radius { get; set; }
+        public Material Material { get; set; }
 
         public Sphere(Vec3f center, float radius, Material material)
         {
@@ -20,14 +16,7 @@ namespace RayTracingLib
             Material = material;
         }
 
-        /// <summary>
-        /// В какой точке луч пересекает сферу
-        /// </summary>
-        /// <param name="orig"></param>
-        /// <param name="dir"></param>
-        /// <param name="t0"></param>
-        /// <returns></returns>
-        public bool RayIntersect(Vec3f orig, Vec3f dir, ref float t0)
+        private bool RayIntersect(Vec3f orig, Vec3f dir, ref float t0)
         {
             var L = Center - orig;
 
@@ -53,6 +42,7 @@ namespace RayTracingLib
         public override bool IsRayIntersect(Vec3f orig, Vec3f dir, ref Vec3f hit, ref Vec3f N, ref Material material)
         {
             var spheresDist = float.MaxValue;
+            var MaxDist = float.MaxValue;
 
             var disti = 0f;
 
@@ -66,7 +56,7 @@ namespace RayTracingLib
 
                 material = Material;
             }
-            return spheresDist < 1000;
+            return spheresDist < MaxDist;
         }
     }
 }
