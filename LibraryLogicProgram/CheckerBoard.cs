@@ -8,6 +8,11 @@ namespace RayTracingLib
     {
         public Vec3f Color1 { get; set; }
         public Vec3f Color2 { get; set; }
+
+        public CheckerBoard()
+        {
+        }
+
         public CheckerBoard(Color color1, Color color2)
         {
             Color1 = new Vec3f(color1.R, color1.B, color1.B);
