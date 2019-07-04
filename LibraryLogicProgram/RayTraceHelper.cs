@@ -15,12 +15,12 @@ namespace RayTracingLib
 
         //};
 
-        public static Bitmap Render(int width, int height, List<IObjectBase> objects, Bitmap background, List<Light> lights)
+        public static Bitmap Render(int width, int height, List<Sphere> objects, Color background, List<Light> lights)
         {
             return CalculateBitmap(width, height, objects, background, lights);
         }
 
-        private static Bitmap CalculateBitmap(int width, int height, List<IObjectBase> objects, Bitmap background, List<Light> lights)
+        private static Bitmap CalculateBitmap(int width, int height, List<Sphere> objects, Color background, List<Light> lights)
         {
             var fov = (float)(Math.PI / 3f);
 
@@ -40,7 +40,7 @@ namespace RayTracingLib
 
                     var vdir = new Vec3f(dirx, diry, dirz).Normalize();
 
-                    var backgroundPixel = background.GetPixel(i, j);
+                    var backgroundPixel = background;//background.GetPixel(i, j);
 
                     framebuffer[i + j * width] = CastRay(vcam, vdir, objects, backgroundPixel, lights);
                 }
@@ -59,7 +59,7 @@ namespace RayTracingLib
         /// <param name="lights"></param>
         /// <param name="depth">Глубина рекурсии</param>
         /// <returns></returns>
-        private static Color CastRay(Vec3f orig, Vec3f dir, List<IObjectBase> objects, Color background, List<Light> lights, int depth = 0)
+        private static Color CastRay(Vec3f orig, Vec3f dir, List<Sphere> objects, Color background, List<Light> lights, int depth = 0)
         {
             foreach (var _object in objects)
             {
