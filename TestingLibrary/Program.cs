@@ -44,10 +44,10 @@ namespace TestingApp
                 new Sphere(new Vec3f(-3, 0, -16), 2, materials[0]),
                 new Sphere(new Vec3f(2f, -1.5f, -12), 2F, materials[3]),
                 new Sphere(new Vec3f(1.5f, -0.5f, -18), 3F, materials[2]),
-                new Sphere(new Vec3f(-3,    5,   -18), 4F, materials[1]),
-                new CheckerBoard(Color.DarkSalmon, Color.Brown)
+                new Sphere(new Vec3f(-3,    5,   -18), 4F, materials[1])
+                //new CheckerBoard(Color.DarkSalmon, Color.Brown)
             };
-            RayTraceHelper.Render(width, height, objects, backgroundImage, lights).Save(nameSave);
+            //RayTraceHelper.Render(width, height, objects, backgroundImage, lights).Save(nameSave);
         }
     }
 }
