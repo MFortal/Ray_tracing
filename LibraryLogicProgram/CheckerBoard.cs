@@ -10,12 +10,8 @@ namespace RayTracingLib
         public Vec3f Color2 { get; set; }
         public CheckerBoard(Color color1, Color color2)
         {
-            this.Color1.x = color1.R;
-            this.Color1.y = color1.G;
-            this.Color1.z = color1.B;
-            this.Color2.x = color2.R;
-            this.Color2.y = color2.G;
-            this.Color2.z = color2.B;
+            Color1 = new Vec3f(color1.R, color1.B, color1.B);
+            Color2 = new Vec3f(color2.R, color2.B, color2.B);
         }
 
         public override bool IsRayIntersect(Vec3f orig, Vec3f dir, ref Vec3f hit, ref Vec3f N,

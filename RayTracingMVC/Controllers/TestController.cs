@@ -22,10 +22,11 @@ namespace RayTracingMVC.Controllers
         {
             var width = request.Width;
             var height = request.Height;
+
             var spheres = request.Spheres;
             var checkerBoard = request.CheckerBoard;
-            var obj = new List<IObjectBase>();
 
+            var obj = new List<IObjectBase>();
             foreach (var sphere in spheres)
             {
                 obj.Add(sphere);
@@ -35,10 +36,16 @@ namespace RayTracingMVC.Controllers
                 obj.Add(checker);
             }
 
+            var pathBack = request.PathBack;
+            var client = new WebClient();
+            var stream = client.OpenRead(pathBack);
+            var background = new Bitmap(stream);
+
             var ligths = request.Lights;
-            var background = request.Background;
+            
 
             var byteArray = RayTraceHelper.Render(width, height, obj, background, ligths).ToByteArray(ImageFormat.Jpeg);
+
             HttpResponseMessage response = new HttpResponseMessage();
             response.Content = new StreamContent(new MemoryStream(byteArray)); // this file stream will be closed by lower layers of web api for you once the response is completed.
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
